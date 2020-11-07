@@ -6,6 +6,7 @@
 __author__ = "Raven Jyro \"G14989\" Felix"
 __copyright__ = "MIT"
 
+IMAGE_HEIGHT = 5
 
 from PIL import Image 
 MAX_8_BIT = 255
@@ -46,7 +47,7 @@ def generate_brk_header():
     "0.14 0.51 0.20 1\n"
     "0.49 0.70 0.90\n"
     "100\n"
-    "400\n")
+    "400")
 
 def _test_generate_brk_header():
     1
@@ -63,24 +64,41 @@ def _test_list_to_space_separated():
     output = list_to_space_separated(test_array)
     assert expected == output
 
-def generate_brk_pixel_brick(position_tuple, color_rgba, name="Sharko"):
+def generate_brk_pixel_brick(position_tuple, color_rgba_8, name="Sharko"):
+    position_string = list_to_space_separated(position_tuple)
+    size_string = list_to_space_separated((1, 1, 1))
+    color = percentize_tuple(color_rgba_8, MAX_8_BIT)
+    color_string = list_to_space_separated(color)
+    brick_header = position_string + " " + size_string + " " + color_string + '\n'
+    brick_attributes = "\t+NAME " + name
+    return brick_header + brick_attributes
 
 def _test_generate_brk_pixel_brick():
     color_raw = (23, 43, 243)
     color = percentize_tuple(color_raw, MAX_8_BIT)
-    expected_value = "1 2 3 1 1 1"
-
+    color_string = list_to_space_separated(color)
+    expected_value = ("1 2 3 1 1 1 " + color_string + "\n"
+                     "\t+NAME Sharko")
+    output = generate_brk_pixel_brick((1, 2, 3), color_raw)
+    assert output == expected_value
 
 def _test():
     _test_percentize_tuple()
     _test_generate_brk_header()
     _test_list_to_space_separated()
+    _test_generate_brk_pixel_brick()
 
 _test()
 
-print(generate_brk_header())
-img = Image.open("roblox-logo.png").convert(mode="RGBA")
+file_name = "roblox-logo.png"
+f = open(file_name + ".brk", "a")
+img = Image.open(file_name).convert(mode="RGBA")
+
+f.write(generate_brk_header() + "\n\n")
+
 for x in range(img.width):
     for y in range(img.height):
-        1
-        #print("img.getpixel((x, y))")
+        color = image.get_pixel(x, y)
+        position = (x, y, IMAGE_HEIGHT)
+        f.write(generate_brk_pixel_brick(position, color)
+
