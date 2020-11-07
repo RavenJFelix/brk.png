@@ -6,4 +6,6 @@
 __author__ = "Raven Jyro \"G14989\" Felix"
 __copyright__ = "MIT"
 
+import pillow as pl
 
+img = Image.open("roblox-logo.png")
